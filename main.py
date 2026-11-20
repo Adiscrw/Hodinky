@@ -61,6 +61,15 @@ class AnalogWatchScreen(Screen):
             self.ptr_secs.value(cmath.rect(0.90, angle_s), RED)
 
             await asyncio.sleep(1)
+
+class StopWach(Screen):
+    def __init__(self):
+        pass
+
+
+class HealthScreen(Screen):
+    def __init__(self):
+        pass
             
             
 
