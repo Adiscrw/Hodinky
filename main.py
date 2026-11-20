@@ -20,25 +20,26 @@ class BaseScreen(Screen):
         wri = CWriter(ssd, freesans20, GREEN, BLACK, verbose=False)
         Label(wri, 95, 55, 'Hello world!')
         #Button je active widget (Screen potrebuje aspon jeden) - ukonci aplikaci
-        #Button(wri, 140, 85, text='Konec', callback=lambda b: Screen.back())
-        CloseButton(wri)
+        Button(wri, 140, 85, text='Konec', callback=lambda b: Screen.change(AnalogWatchScreen))
+        #CloseButton(wri)
 
 class AnalogWatchScreen(Screen):
     def __init__(self):
         super().__init__()
-        self.wri = CWriter(ssd, arial10, WHITE, BLACK, verbose=False)
+        wri = CWriter(ssd, arial10, WHITE, BLACK, verbose=False)
 
         # Kruhový ciferník vycentrovaný na displeji 240x240 px (průměr 200 px)
-        self.dial = Dial(self.wri, 20, 20, height=200, ticks=12, bdcolor=WHITE, pip=RED)
+        self.dial = Dial(wri, 20, 20, height=200, ticks=12, bdcolor=WHITE, pip=RED)
         
         # Vytvoření hodinové, minutové a vteřinové ručičky[cite: 4]
         self.ptr_hrs = Pointer(self.dial)
         self.ptr_mins = Pointer(self.dial)
         self.ptr_secs = Pointer(self.dial)
         # Skryté zavírací tlačítko pro stisk fyzického SEL[cite: 5]
-        CloseButton(self.wri)
+        Button(wri, 140, 85, text='Konec', callback=lambda _: Screen.back())
+        #CloseButton(self.wri)
 
-        self.reg_task(self.update_hands())
+        self.reg_task(self.update_hands(),on_change=False)
         
 
     async def update_hands(self):
@@ -66,7 +67,6 @@ class AnalogWatchScreen(Screen):
 
 
 
-while True:
-    Screen.change(BaseScreen)
-    Screen.change(AnalogWatchScreen)
-    #Screen.change(BaseScreen)
+
+Screen.change(BaseScreen)
+
