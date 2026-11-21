@@ -87,6 +87,9 @@ from gui.core.ugui import Display, quiet
 # Ovladaci tlacitka - UPRAVTE podle toho, co fyzicky pripojite (aspon nxt a sel):
 nxt = Pin(1, Pin.IN, Pin.PULL_UP)  # D0 (GPIO1) - dalsi widget
 sel = Pin(3, Pin.IN, Pin.PULL_UP)  # D2 (GPIO3) - potvrdit (pozor: D2 je CS SD karty na Round Display)
+prev = Pin(7,Pin.IN,Pin.PULL_UP)
 
-display = Display(ssd, nxt, sel)
+
+display = Display(ssd, nxt, sel,prev)
+
 
