@@ -21,7 +21,10 @@ class BaseScreen(Screen):
         Label(wri, 95, 55, 'Hello world!')
         #Button je active widget (Screen potrebuje aspon jeden) - ukonci aplikaci
         Button(wri, 140, 85, text='Konec', callback=lambda b: Screen.change(AnalogWatchScreen))
-        #CloseButton(wri)
+        Button(wri, 140, 125, width=70, text="Dalsi ->", fgcolor=BLUE,
+                callback=lambda _: Screen.change(AnalogWatchScreen, mode=Screen.REPLACE))
+        Button(wri, 140, 45, width=70, text="<- Zpet", fgcolor=YELLOW,
+                callback=lambda _: Screen.change(HeartScreen, mode=Screen.REPLACE))
 
 class AnalogWatchScreen(Screen):
     def __init__(self):
@@ -36,8 +39,12 @@ class AnalogWatchScreen(Screen):
         self.ptr_mins = Pointer(self.dial)
         self.ptr_secs = Pointer(self.dial)
         # Skryté zavírací tlačítko pro stisk fyzického SEL[cite: 5]
-        Button(wri, 140, 85, text='Konec', callback=lambda _: Screen.back())
+        #Button(wri, 140, 85, text='Konec', callback=lambda _: Screen.back())
         #CloseButton(self.wri)
+        Button(wri, 140, 125, width=70, text="Dalsi ->", fgcolor=BLUE,
+                callback=lambda _: Screen.change(HeartScreen, mode=Screen.REPLACE))
+        Button(wri, 140, 45, width=70, text="<- Zpet", fgcolor=YELLOW,
+                callback=lambda _: Screen.change(BaseScreen, mode=Screen.REPLACE))
 
         self.reg_task(self.update_hands(),on_change=False)
         
@@ -67,9 +74,18 @@ class StopWach(Screen):
         pass
 
 
-class HealthScreen(Screen):
+class HeartScreen(Screen):
     def __init__(self):
-        pass
+        super().__init__()
+        wri = CWriter(ssd, freesans20, GREEN, BLACK, verbose=False)
+        wri_btn = CWriter(ssd, arial10, WHITE, BLACK, verbose=False)
+
+        Label(wri, 75, 55, "Tep: 72 BPM")
+
+        Button(wri_btn, 140, 125, width=70, text="Dalsi ->", fgcolor=BLUE,
+               callback=lambda _: Screen.change(BaseScreen, mode=Screen.REPLACE))
+        Button(wri_btn, 140, 45, width=70, text="<- Zpet", fgcolor=YELLOW,
+               callback=lambda _: Screen.change(AnalogWatchScreen, mode=Screen.REPLACE))
             
             
 
