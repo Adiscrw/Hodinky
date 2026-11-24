@@ -62,11 +62,13 @@
 
 
 import gc
-from machine import Pin, SPI, freq
+from machine import Pin, SPI, freq  #I2C
+from machine import I2C
 
 freq(240_000_000)  # ESP32-S3 na plny vykon
 
 from drivers.gc9a01.gc9a01 import GC9A01 as SSD  # 4bitovy ovladac, framebuffer ~28,8 kB
+
 
 # Piny displeje
 pcs = Pin(2, Pin.OUT, value=1)    # D1
@@ -75,6 +77,8 @@ prst = Pin(21, Pin.OUT, value=1)  # pomocny pin - RST na desce neni vyveden (GPI
 pbl = Pin(43, Pin.OUT, value=1)   # D6 - podsvit, 1 = zapnuto
 
 spi = SPI(1, baudrate=30_000_000, sck=Pin(7), mosi=Pin(9), miso=Pin(8))
+
+i2c = I2C(0, scl=Pin(6), sda=Pin(5), freq=400_000)
 
 gc.collect()  # Opatreni pred vytvorenim framebufferu
 ssd = SSD(spi, pcs, pdc, prst)  # vychozi 240x240, pripadne: usd=True / mirror=True / lscape=True
@@ -87,9 +91,9 @@ from gui.core.ugui import Display, quiet
 # Ovladaci tlacitka - UPRAVTE podle toho, co fyzicky pripojite (aspon nxt a sel):
 nxt = Pin(1, Pin.IN, Pin.PULL_UP)  # D0 (GPIO1) - dalsi widget
 sel = Pin(3, Pin.IN, Pin.PULL_UP)  # D2 (GPIO3) - potvrdit (pozor: D2 je CS SD karty na Round Display)
-prev = Pin(7,Pin.IN,Pin.PULL_UP)
+#prev = Pin(7,Pin.IN,Pin.PULL_UP)
 
 
-display = Display(ssd, nxt, sel,prev)
+display = Display(ssd, nxt, sel)
 
 
