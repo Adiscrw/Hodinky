@@ -263,6 +263,8 @@ class HealthScreen(Screen):
         finally:
             # Při opuštění obrazovky uspí senzor a zhasne červenou LED
             sensor.shutdown()
+
+            #jsfjsdkljsl;kfjsl
             
             
 
