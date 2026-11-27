@@ -89,11 +89,18 @@ from gui.core.ugui import Display, quiet
 # quiet()  # odkomentovat pro potlaceni diagnostickych hlasek
 
 # Ovladaci tlacitka - UPRAVTE podle toho, co fyzicky pripojite (aspon nxt a sel):
-nxt = Pin(1, Pin.IN, Pin.PULL_UP)  # D0 (GPIO1) - dalsi widget
-sel = Pin(3, Pin.IN, Pin.PULL_UP)  # D2 (GPIO3) - potvrdit (pozor: D2 je CS SD karty na Round Display)
-#prev = Pin(7,Pin.IN,Pin.PULL_UP)
+# nxt = Pin(1, Pin.IN, Pin.PULL_UP)  # D0 (GPIO1) - dalsi widget
+# sel = Pin(3, Pin.IN, Pin.PULL_UP)  # D2 (GPIO3) - potvrdit (pozor: D2 je CS SD karty na Round Display)
+# prev = Pin(7,Pin.IN,Pin.PULL_UP)
+
+ex = Pin(9, Pin.IN, Pin.PULL_UP)      # Enkodér A
+ey = Pin(21, Pin.IN, Pin.PULL_UP)     # Enkodér B
+btn_sel = Pin(1, Pin.IN, Pin.PULL_UP)
 
 
-display = Display(ssd, nxt, sel)
+display = Display(ssd, nxt=ex, sel=btn_sel, prev=ey, incr=False, encoder=True)  #v encoderu by melo byt 4
+
+PIN_BTN_MODE = Pin(44, Pin.IN, Pin.PULL_UP) # Tlačítko 2 (D7)
+PIN_BTN_SET  = Pin(7, Pin.IN, Pin.PULL_UP)  # Tlačítko 3 (D8)
 
 
