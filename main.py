@@ -2,6 +2,7 @@
 # (rohy displeje jsou oriznute kruhem, proto je obsah umisten ke stredu)
 from hardware_setup import ssd  # Vytvori displej - musi byt prvni import
 from hardware_setup import i2c
+from hardware_setup import btn_switch,btn_sel
 from gui.core.ugui import Screen
 from gui.core.writer import CWriter
 from gui.core.colors import *
@@ -9,7 +10,8 @@ import time
 import asyncio
 import cmath
 
-from gui.widgets import Label, Button,CloseButton,Dial,Pointer
+from gui.widgets import Label, Button,CloseButton,Dial,Pointer,Slider,Checkbox
+from gui.primitives.pushbutton import Pushbutton
 import gui.fonts.freesans20 as freesans20
 import gui.fonts.arial10 as arial10
 
@@ -29,10 +31,15 @@ from max30102 import MAX30102, MAX30105_PULSE_AMP_MEDIUM
 #         # Button(wri, 140, 45, width=70, text="<- Zpet", fgcolor=YELLOW,
 #         #         callback=lambda _: Screen.change(HeartScreen, mode=Screen.REPLACE))
 
+#===================================================================================
+#           OBRAZOVKY HODINEK, HLAVNI SMYCKA
+#===================================================================================
+
 class AnalogWatchScreen(Screen):
     def __init__(self):
         super().__init__()
         wri = CWriter(ssd, arial10, WHITE, BLACK, verbose=False)
+        print("hodiny")
 
         # Kruhový ciferník vycentrovaný na displeji 240x240 px (průměr 200 px)
         self.dial = Dial(wri, 20, 20, height=200, ticks=12, bdcolor=WHITE, pip=RED)
@@ -161,9 +168,6 @@ class StopwatchScreen(Screen):
             # Obnovovací frekvence 10 Hz (každých 100 ms stačí pro desetiny sekundy)
             await asyncio.sleep_ms(100)
 
-
-
-
 class HealthScreen(Screen):
     def __init__(self):
         super().__init__()
@@ -265,12 +269,89 @@ class HealthScreen(Screen):
             sensor.shutdown()
 
             #jsfjsdkljsl;kfjsl
-            
-            
+
+#===================================================================================
+#           Obrazovka pro listovani obrazovkami
+#===================================================================================
+
+class ScreenSelectScreen(Screen):
+    def __init__(self, return_cls=AnalogWatchScreen):
+        super().__init__()
+        self.return_cls = return_cls
+        wri_lbl = CWriter(ssd, arial10, YELLOW, BLACK, verbose=False)
+        wri_btn = CWriter(ssd, freesans20, WHITE, BLACK, verbose=False)
+
+        Label(wri_lbl, 25, 62, "VYBER OBRAZOVKY")
+
+        # Otáčením enkodéru se posouvá fokus mezi těmito položkami,
+        # stiskem Tlačítka 1 (SEL) se zvolená obrazovka okamžitě otevře.
+        Button(wri_btn, 60, 55, width=130, height=32, text="Hodiny", fgcolor=CYAN,
+               callback=lambda _: Screen.change(AnalogWatchScreen, mode=Screen.REPLACE))
+        Button(wri_btn, 102, 55, width=130, height=32, text="Stopky", fgcolor=YELLOW,
+               callback=lambda _: Screen.change(StopwatchScreen, mode=Screen.REPLACE))
+        Button(wri_btn, 144, 55, width=130, height=32, text="Zdravi", fgcolor=GREEN,
+               callback=lambda _: Screen.change(HealthScreen, mode=Screen.REPLACE))
+
+#===================================================================================
+#           Settings obrazovka, nastavuju hodinky  
+# ==================================================================================          
+class SettingsScreen(Screen):
+    def __init__(self):
+        super().__init__()
+        wri_lbl = CWriter(ssd, arial10, CYAN, BLACK, verbose=False)
+        wri_val = CWriter(ssd, arial10, WHITE, BLACK, verbose=False)
+
+        Label(wri_lbl, 25, 85, "NASTAVENI")
+
+        Label(wri_val, 60, 40, "Jas:")
+        Slider(wri_val, 55, 85, width=100, height=20, value=0.8,
+               callback=lambda s: print("Jas:", int(s.value() * 100), "%"))
+
+        Label(wri_val, 100, 40, "Vibrace:")
+        Checkbox(wri_val, 98, 110, value=True,
+                 callback=lambda cb: print("Vibrace:", cb.value()))
+
+        Button(wri_val, 145, 80, width=80, text="Hotovo", fgcolor=GREEN,
+               callback=lambda _: Screen.change(AnalogWatchScreen, mode=Screen.REPLACE))
+
+#=============================================================================
+#           Globalni obsluha tlacitek
+#=============================================================================
+
+def toggle_screen_selector():
+    current = Screen.current_screen
+    if isinstance(current, ScreenSelectScreen):
+        Screen.change(current.return_cls, mode=Screen.REPLACE)
+    else:
+        return_cls = type(current) if current is not None else AnalogWatchScreen
+        Screen.change(ScreenSelectScreen, mode=Screen.REPLACE, kwargs={"return_cls": return_cls})
 
 
+def toggle_settings():
+    if isinstance(Screen.current_screen, SettingsScreen):
+        Screen.change(AnalogWatchScreen, mode=Screen.REPLACE)
+    else:
+        Screen.change(SettingsScreen, mode=Screen.REPLACE)
 
 
+async def handle_switch_press():
+    # Krátké okno (80 ms) zachytí současný stisk select + switch_to_change
+    await asyncio.sleep_ms(80)
+    if btn_sel.value() == 0:
+        toggle_settings()
+    else:
+        toggle_screen_selector()
 
+
+def on_switch_trigger():
+    asyncio.create_task(handle_switch_press())
+
+
+pb_switch = Pushbutton(btn_switch)
+pb_switch.press_func(on_switch_trigger)  # type: ignore
+
+# Spuštění hodinek
 Screen.change(AnalogWatchScreen)
+
+
 
