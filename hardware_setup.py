@@ -30,10 +30,10 @@ from gui.core.ugui import Display, quiet
 # sel = Pin(3, Pin.IN, Pin.PULL_UP)  # D2 (GPIO3) - potvrdit (pozor: D2 je CS SD karty na Round Display)
 # prev = Pin(7,Pin.IN,Pin.PULL_UP)
 
-ex = Pin(9, Pin.IN, Pin.PULL_UP)          # Enkodér Pin A (D10 / GPIO 9)[cite: 8]
-ey = Pin(21, Pin.IN, Pin.PULL_UP)         # Enkodér Pin B (GPIO 21)[cite: 8]
-btn_sel = Pin(1, Pin.IN, Pin.PULL_UP)     # Tlačítko SELECT (D0 / GPIO 1)[cite: 5]
-btn_switch = Pin(44, Pin.IN, Pin.PULL_UP) # Tlačítko SWITCH_TO_CHANGE (D7 / GPIO 44)[cite: 5]
+ex = Pin(1, Pin.IN, Pin.PULL_UP)          # D0
+ey = Pin(8, Pin.IN, Pin.PULL_UP)         # D9
+btn_sel = Pin(44, Pin.IN, Pin.PULL_UP)     # D7
+btn_switch = Pin(3, Pin.IN, Pin.PULL_UP) # D2
 
 # Režim Encoder-only: enkodér posouvá fokus, btn_sel potvrzuje[cite: 4]
 display = Display(ssd, nxt=ex, sel=btn_sel, prev=ey, incr=False, encoder=4)
