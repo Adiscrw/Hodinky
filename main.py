@@ -268,6 +268,7 @@ class HealthScreen(Screen):
             # Při opuštění obrazovky uspí senzor a zhasne červenou LED
             sensor.shutdown()
 
+<<<<<<< HEAD
             #jsfjsdkljsl;kfjsl
 
 #===================================================================================
@@ -325,6 +326,11 @@ def toggle_screen_selector():
     else:
         return_cls = type(current) if current is not None else AnalogWatchScreen
         Screen.change(ScreenSelectScreen, mode=Screen.REPLACE, kwargs={"return_cls": return_cls})
+=======
+            #jsfjsdkljsl;kfjsljeoifjeiofohfoehfue
+            
+            
+>>>>>>> 5cda41c0aea69b127539f8bb745445b0e9cd4e4c
 
 
 def toggle_settings():
